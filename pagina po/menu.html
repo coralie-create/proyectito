@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catering Seven - Menú</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: yellow;
+            --secondary-color: #2e5770;
+            --accent-color: #f4a460;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: var(--secondary-color);
+            color: #ffffff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+        header.scrolled {
+            background: rgba(53, 66, 74, 0.9);
+            backdrop-filter: blur(5px);
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        header .highlight, header .current a {
+            color: yellow;
+            font-weight: bold;
+        }
+        header ul {
+            display: flex;
+            list-style: none;
+        }
+        header li {
+            padding: 0 15px;
+        }
+        header a:hover {
+            color: var(--accent-color);
+        }
+        #menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        #menu {
+            padding-top: 100px;
+        }
+        #menu h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+        }
+        .menu-filters {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .filter-btn {
+            background: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background-color: blue;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .menu-item {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .menu-item h3 {
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+        .menu-item p {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        .price {
+            font-weight: bold;
+            color: blue;
+            font-size: 1.1rem;
+        }
+        .add-to-cart {
+            background: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .add-to-cart:hover {
+            background-color: blue;
+        }
+        #cart {
+            position: fixed;
+            top: 70px;
+            right: -300px;
+            width: 300px;
+            height: calc(100vh - 70px);
+            background: #fff;
+            padding: 1rem;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        #cart.open {
+            right: 0;
+        }
+        #cart h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item-info {
+            flex-grow: 1;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        .cart-item-quantity button {
+            background: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .cart-item-quantity button:hover {
+            background-color: blue;
+        }
+        .cart-item-quantity span {
+            margin: 0 0.5rem;
+        }
+        #cart-total {
+            font-weight: bold;
+            margin-top: 1rem;
+            text-align: right;
+        }
+        #cart-toggle {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: blue;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 5px;
+        }
+        #proceed-to-checkout {
+            background: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        #proceed-to-checkout:hover {
+            background-color: blue;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .menu-item {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @media (max-width: 768px) {
+            header .container {
+                flex-direction: column;
+            }
+            header ul {
+                margin-top: 1rem;
+                flex-direction: column;
+                display: none;
+            }
+            header ul.show {
+                display: flex;
+            }
+            header li {
+                padding: 0.5rem 0;
+            }
+            #menu-toggle {
+                display: block;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+            }
+            .menu-filters {
+                flex-wrap: wrap;
+            }
+            .filter-btn {
+                margin-bottom: 0.5rem;
+            }
+            #cart {
+                width: 100%;
+                right: -100%;
+            }
+            #cart-toggle {
+                top: auto;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><span class="highlight">Catering</span> Seven</h1>
+            <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li class="current"><a href="menu.html">Menú</a></li>
+                    <li><a href="reservations.html">Reservaciones</a></li>
+                    <li><a href="contact.html">Contacto</a></li>
+                    <li><a href="nosotros.html">Nosotros</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="menu">
+        <div class="container">
+            <h2>Nuestro Menú Completo</h2>
+            <div class="menu-filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="main">Platos Principales</button>
+                <button class="filter-btn" data-filter="appetizer">Entradas</button>
+                <button class="filter-btn" data-filter="dessert">Postres</button>
+            </div>
+            <div class="menu-grid" id="menu-items">
+                <!-- Menu items will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <button id="cart-toggle">Ver Carrito</button>
+
+    <div id="cart">
+        <h3>Tu Carrito</h3>
+        <div id="cart-items">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        <div id="cart-total">Total: $0.00</div>
+        <button id="proceed-to-checkout">Proceder al pago</button>
+    </div>
+
+    <script>
+        // Menu data
+        const menuItems = [
+            { id: 1, name: "Paella Valenciana", description: "Auténtica paella española con mariscos y pollo", price: 15.99, category: "main", image: "img/bre.jpeg" },
+            { id: 2, name: "Pasta al Pesto", description: "Pasta fresca con salsa pesto casera y parmesano", price: 12.99, category: "main", image: "img/catering.jpeg" },
+            { id: 3, name: "Ensalada César", description: "Lechuga romana, crutones, queso parmesano y aderezo César", price: 8.99, category: "appetizer", image: "img/cate.jpeg" },
+            { id: 4, name: "Salmón a la Parrilla", description: "Filete de salmón fresco a la parrilla con vegetales de temporada", price: 18.99, category: "main", image: "img/os.jpeg" },
+            { id: 5, name: "Risotto de Champiñones", description: "Cremoso risotto con variedad de champiñones y queso parmesano", price: 14.99, category: "main", image: "img/catering.jpeg" },
+            { id: 6, name: "Tiramisú", description: "Clásico postre italiano con café y mascarpone", price: 7.99, category: "dessert", image: "img/oso.jpeg" },
+            { id: 7, name: "Ceviche", description: "Pescado fresco marinado en limón con cebolla y cilantro", price: 13.99, category: "appetizer", image: "img/catering.jpeg" },
+            { id: 8, name: "Crème Brûlée", description: "Suave crema con cobertura de azúcar caramelizada", price: 6.99, category: "dessert", image: "img/tro.jpg" }
+        ];
+
+        // Cart data
+        let cart = [];
+
+        // Function to render menu items
+        function renderMenuItems(items) {
+            const menuContainer = document.getElementById('menu-items');
+            menuContainer.innerHTML = '';
+            items.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.classList.add('menu-item');
+                menuItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    <span class="price">$${item.price.toFixed(2)}</span>
+                    <button class="add-to-cart" data-id="${item.id}">Añadir al carrito</button>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        // Function to add item to cart
+        function addToCart(id) {
+            const item = menuItems.find(item => item.id === id);
+            const existingItem = cart.find(cartItem => cartItem.id === id);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        // Function to update cart
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <p>$${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button onclick="decreaseQuantity(${item.id})">-</button>
+                        <span>${item.quantity}</span>
+                        <button  onclick="increaseQuantity(${item.id})">+</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+                total += item.price * item.quantity;
+            });
+
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        // Function to increase item quantity
+        function increaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity++;
+                updateCart();
+            }
+        }
+
+        // Function to decrease item quantity
+        function decreaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity--;
+                if (item.quantity === 0) {
+                    cart = cart.filter(cartItem => cartItem.id !== id);
+                }
+                updateCart();
+            }
+        }
+
+        // Function to handle checkout
+        function proceedToCheckout() {
+            alert('Procediendo al pago. Total: $' + cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2));
+            // Aquí puedes agregar la lógica para redirigir a una página de pago o mostrar un formulario de pago
+        }
+
+        // Initial render
+        renderMenuItems(menuItems);
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const filter = button.getAttribute('data-filter');
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                const filteredItems = filter === 'all' ? menuItems : menuItems.filter(item => item.category === filter);
+                renderMenuItems(filteredItems);
+            });
+        });
+
+        // Add to cart functionality
+        document.getElementById('menu-items').addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-to-cart')) {
+                const id = parseInt(e.target.getAttribute('data-id'));
+                addToCart(id);
+            }
+        });
+
+        // Mobile menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('show');
+        });
+
+        // Cart toggle
+        document.getElementById('cart-toggle').addEventListener('click', function() {
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        // Proceed to checkout
+        document.getElementById('proceed-to-checkout').addEventListener('click', proceedToCheckout);
+
+        // Close mobile menu and cart when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('nav-menu');
+            const menuToggle = document.getElementById('menu-toggle');
+            const cart = document.getElementById('cart');
+            const cartToggle = document.getElementById('cart-toggle');
+
+            if (!navMenu.contains(event.target) && event.target !== menuToggle) {
+                navMenu.classList.remove('show');
+            }
+
+            if (!cart.contains(event.target) && event.target !== cartToggle) {
+                cart.classList.remove('open');
+            }
+        });
+
+        // Scroll effect for header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 0);
+        });
+    </script>
+</body>
+</html>

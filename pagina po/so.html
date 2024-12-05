@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Mantén tus metadatos y enlaces a fuentes existentes -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catering Seven - Experiencia Culinaria Excepcional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tus estilos existentes */
+        :root {
+            --primary-color: #dbe81d;
+            --secondary-color: #2e5770;
+            --accent-color: #f4a460;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: var(--secondary-color);
+            color: #ffffff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+        header.scrolled {
+            background: rgba(53, 66, 74, 0.9);
+            backdrop-filter: blur(5px);
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        header .highlight, header .current a {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+            display: flex;
+        }
+        header li {
+            padding: 0 1rem;
+        }
+        header a:hover {
+            color: var(--accent-color);
+        }
+        #menu-toggle {
+            display: none;
+        }
+        #showcase {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        #image-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .carousel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            object-fit: cover;
+        }
+        .carousel-image.active {
+            opacity: 1;
+        }
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        #showcase .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #ffffff;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #showcase h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #showcase p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .btn {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .btn:hover {
+            background:blue;
+            transform: translateY(-3px);
+        }
+        #menu {
+            padding: 4rem 0;
+            background: #ffffff;
+        }
+        #menu h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .menu-item {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .menu-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        .menu-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+        .menu-item p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        .price {
+            font-weight: bold;
+            color: blue;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .add-to-cart {
+            background: var(--secondary-color);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .add-to-cart:hover {
+            background: blue;
+            transform: translateY(-2px);
+        }
+        #cart {
+            background: #35424a;
+            color: #ffffff;
+            padding: 1rem;
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #cart.open {
+            transform: translateX(0);
+        }
+        #cart h2 {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .cart-item {
+            background: #ffffff;
+            color: var(--text-color);
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #total {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        #checkout {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--secondary-color);
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 1rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #checkout:hover {
+            background: blue;
+        }
+        #search-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        #search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 2px solid var(--secondary-color);
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(232, 73, 29, 0.5);
+        }
+        #load-more {
+            display: block;
+            width: 200px;
+            margin: 2rem auto 0;
+            padding: 0.8rem;
+            background: var(--secondary-color);
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        #load-more:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        #cart-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            width: 60px;
+            height: 60px;
+        }
+        #cart-toggle:hover {
+            background:blue;
+            transform: scale(1.1);
+        }
+        #close-cart {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        @media(max-width: 768px) {
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            header ul {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                margin-top: 1rem;
+            }
+            header ul.show {
+                display: flex;
+            }
+            header li {
+                padding: 0.5rem 0;
+            }
+            #menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+            }
+            #showcase h1 {
+                font-size: 2rem;
+            }
+            #showcase p {
+                font-size: 1rem;
+            }
+            #cart {
+                width: 100%;
+                right: -100%;
+            }
+            #cart.open {
+                right: 0;
+            }
+        }
+
+        /* Añade estos estilos para el preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #ffecd2, #fcb69f);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .loader-content {
+            text-align: center;
+        }
+        .plate {
+            width: 100px;
+            height: 100px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            border: 3px solid #ff6b6b;
+            position: relative;
+            margin: 0 auto 20px;
+            animation: rotate 2s infinite linear;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+        .food {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .food:nth-child(1) { top: 20%; left: 20%; background-color: #feca57; }
+        .food:nth-child(2) { top: 20%; right: 20%; background-color: #ff9ff3; }
+        .food:nth-child(3) { bottom: 20%; left: 20%; background-color: #54a0ff; }
+        .food:nth-child(4) { bottom: 20%; right: 20%; background-color: #5f27cd; }
+        .food:nth-child(5) { top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #ff6b6b; }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loading-text {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #progress-bar {
+            width: 200px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.5);
+            margin: 15px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #progress {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 300% 100%;
+            animation: gradientProgress 2s linear infinite;
+            transition: width 0.5s ease;
+        }
+        @keyframes gradientProgress {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .social-icons {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .social-icons a:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Añade el preloader justo después de la etiqueta de apertura del body -->
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="plate">
+                <div class="food"></div>
+                <div class="food"></div>
+                <div class="food"></div>
+                <div class="food"></div>
+                <div class="food"></div>
+            </div>
+            <h1>Catering Seven</h1>
+            <p id="loading-text">Preparando una experiencia culinaria excepcional...</p>
+            <div id="progress-bar">
+                <div id="progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tu contenido existente -->
+    <header>
+        <!-- ... -->
+        <ul id="nav-menu">
+            <li class="current"><a href="#showcase">Inicio</a></li>
+            <li><a href="menu.html" target="_blank">Menú</a></li>
+            <li><a href="reservations.html" target="_blank">Reservaciones</a></li>
+            <li><a href="contact.html" target="_blank">Contacto</a></li>
+            <li><a href="nosotros.html" target="_blank">Nosotros</a></li>
+        </ul>
+    </header>
+
+    <section id="showcase">
+        <!-- ... -->
+    </section>
+
+    <section id="menu">
+        <!-- ... -->
+    </section>
+
+    <aside id="cart">
+        <!-- ... -->
+    </aside>
+
+    <button id="cart-toggle">🛒 <span id="cart-item-count">0</span></button>
+
+    <div class="social-icons">
+        <a href="https://facebook.com/cateringseven" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        </a>
+        <a href="https://twitter.com/cateringseven" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+        </a>
+        <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" aria-label="Contáctanos por WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        </a>
+    </div>
+
+    <script>
+        // Tu script existente
+
+        // Añade este código al principio de tu script existente
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader');
+            const progress = document.getElementById('progress');
+            const loadingText = document.getElementById('loading-text');
+            const loadingPhrases = [
+                "Seleccionando los mejores ingredientes...",
+                "Preparando el menú perfecto...",
+                "Afinando los últimos detalles...",
+                "Casi listo para servirte..."
+            ];
+            let currentPhrase = 0;
+
+            function updateLoadingText() {
+                loadingText.textContent = loadingPhrases[currentPhrase];
+                currentPhrase = (currentPhrase + 1) % loadingPhrases.length;
+            }
+
+            function simulateLoading() {
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            preloader.style.opacity = '0';
+                            setTimeout(() => {
+                                preloader.style.display = 'none';
+                            }, 500);
+                        }, 500);
+                    } else {
+                        width += 1;
+                        progress.style.width = width + '%';
+                        if (width % 25 === 0) {
+                            updateLoadingText();
+                        }
+                    }
+                }, 50);
+            }
+
+            updateLoadingText();
+            simulateLoading();
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader');
+            const progress = document.getElementById('progress');
+            const loadingText = document.getElementById('loading-text');
+            const loadingPhrases = [
+                "Seleccionando los mejores ingredientes...",
+                "Preparando el menú perfecto...",
+                "Afinando los últimos detalles...",
+                "Casi listo para servirte..."
+            ];
+            let currentPhrase = 0;
+
+            function updateLoadingText() {
+                loadingText.textContent = loadingPhrases[currentPhrase];
+                currentPhrase = (currentPhrase + 1) % loadingPhrases.length;
+            }
+
+            function simulateLoading() {
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            preloader.style.opacity = '0';
+                            setTimeout(() => {
+                                preloader.style.display = 'none';
+                            }, 500);
+                        }, 500);
+                    } else {
+                        width += 1;
+                        progress.style.width = width + '%';
+                        if (width % 25 === 0) {
+                            updateLoadingText();
+                        }
+                    }
+                }, 50);
+            }
+
+            updateLoadingText();
+            simulateLoading();
+        });
+
+            // Simulación de API para platos
+            const allDishes = [
+                { name: "Paella Valenciana", description: "Auténtica paella española con mariscos y pollo", price: 15.99, image: "img/yo.jpg" },
+                { name: "Pasta al Pesto", description: "Pasta fresca con salsa pesto casera y parmesano", price: 12.99, image: "img/cate.jpeg" },
+                { name: "Ensalada César", description: "Lechuga romana, crutones, queso parmesano y aderezo César", price: 8.99, image:  "img/empanadas.jpeg" },
+                { name: "Salmón a la Parrilla", description: "Filete de salmón fresco a la parrilla con vegetales de temporada", price: 18.99, image: "img/os.jpeg" },
+                { name: "Risotto de Champiñones", description: "Cremoso risotto con variedad de champiñones y queso parmesano", price: 14.99, image: "img/yo.jpg" },
+                { name: "Pollo al Limón", description: "Pechuga de pollo en salsa de limón con hierbas frescas", price: 13.99, image: "img/empanadas.jpeg" },
+                { name: "Tacos de Carnitas", description: "Tacos de cerdo deshebrado con cebolla y cilantro", price: 10.99, image: "img/catering.jpeg" },
+                { name: "Lasaña Vegetariana", description: "Capas de pasta con verduras asadas y queso ricotta", price: 11.99, image: "img/cate.jpeg" }
+            ];
+    
+            let displayedDishes = 4;
+            let filteredDishes = [...allDishes];
+    
+            // Cargar platos iniciales
+            function loadDishes() {
+                const menuItems = document.getElementById('menu-items');
+                menuItems.innerHTML = '';
+                for (let i = 0; i < displayedDishes && i < filteredDishes.length; i++) {
+                    const dish = filteredDishes[i];
+                    const dishElement = document.createElement('div');
+                    dishElement.classList.add('menu-item');
+                    dishElement.innerHTML = `
+                        <img src="${dish.image}" alt="${dish.name}">
+                        <h3>${dish.name}</h3>
+                        <p>${dish.description}</p>
+                        <span class="price">$${dish.price.toFixed(2)}</span>
+                        <button class="add-to-cart" data-name="${dish.name}" data-price="${dish.price}">Añadir al carrito</button>
+                    `;
+                    menuItems.appendChild(dishElement);
+                }
+                document.getElementById('load-more').style.display = displayedDishes >= filteredDishes.length ? 'none' : 'block';
+            }
+    
+            // Búsqueda de platos
+            document.getElementById('search-input').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filteredDishes = allDishes.filter(dish => 
+                    dish.name.toLowerCase().includes(searchTerm) || 
+                    dish.description.toLowerCase().includes(searchTerm)
+                );
+                displayedDishes = 4;
+                loadDishes();
+            });
+    
+            // Cargar más platos
+            document.getElementById('load-more').addEventListener('click', function() {
+                displayedDishes += 4;
+                loadDishes();
+            });
+    
+            // Carrusel de imágenes
+            const carousel = document.getElementById('image-carousel');
+            const images = carousel.getElementsByClassName('carousel-image');
+            let currentIndex = 0;
+    
+            function showNextImage() {
+                images[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % images.length;
+                images[currentIndex].classList.add('active');
+            }
+    
+            setInterval(showNextImage, 5000);
+    
+            // Carrito de compras
+            let cart = [];
+    
+            function addToCart(name, price) {
+                const existingItem = cart.find(item => item.name === name);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({ name, price, quantity: 1 });
+                }
+                updateCart();
+            }
+    
+            // Update cart item count
+            function updateCartItemCount() {
+                const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+                document.getElementById('cart-item-count').textContent = itemCount;
+            }
+    
+            function updateCart() {
+                const cartItems = document.getElementById('cart-items');
+                const totalElement = document.getElementById('total');
+                cartItems.innerHTML = '';
+                let total = 0;
+    
+                cart.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('cart-item');
+                    itemElement.innerHTML = `
+                        <span>${item.name} x${item.quantity}</span>
+                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                    `;
+                    cartItems.appendChild(itemElement);
+                    total += item.price * item.quantity;
+                });
+    
+                totalElement.textContent = `Total: $${total.toFixed(2)}`;
+                updateCartItemCount();
+            }
+    
+            document.getElementById('menu-items').addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart')) {
+                    const name = e.target.getAttribute('data-name');
+                    const price = parseFloat(e.target.getAttribute('data-price'));
+                    addToCart(name, price);
+                }
+            });
+    
+            document.getElementById('checkout').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (cart.length === 0) {
+                    alert('Tu carrito está vacío. Añade algunos productos antes de proceder al pago.');
+                } else {
+                    alert('¡Gracias por tu pedido en Catering Seven! El total es $' + document.getElementById('total').textContent.split('$')[1]);
+                    cart = [];
+                    updateCart();
+                }
+            });
+    
+            // Desplazamiento suave
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+    
+            // Toggle menú en móviles
+            document.getElementById('menu-toggle').addEventListener('click', function() {
+                document.getElementById('nav-menu').classList.toggle('show');
+            });
+    
+            // Toggle carrito
+            document.getElementById('cart-toggle').addEventListener('click', function() {
+                const cartElement = document.getElementById('cart');
+                cartElement.classList.toggle('open');
+                this.setAttribute('aria-expanded', cartElement.classList.contains('open'));
+            });
+    
+            // Cerrar carrito al hacer clic fuera de él
+            document.addEventListener('click', function(event) {
+                const cart = document.getElementById('cart');
+                const cartToggle = document.getElementById('cart-toggle');
+                if (!cart.contains(event.target) && event.target !== cartToggle) {
+                    cart.classList.remove('open');
+                    document.getElementById('cart-toggle').setAttribute('aria-expanded', 'false');
+                }
+            });
+    
+    
+            // Cerrar menú al hacer clic en un enlace (para móviles)
+            document.querySelectorAll('#nav-menu a').forEach(link => {
+                link.addEventListener('click', function() {
+                    document.getElementById('nav-menu').classList.remove('show');
+                });
+            });
+    
+            // Cambiar el fondo del header al hacer scroll
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                header.classList.toggle('scrolled', window.scrollY > 0);
+            });
+    
+            // Animación de entrada para los elementos del menú
+            function animateMenuItems() {
+                const menuItems = document.querySelectorAll('.menu-item');
+                menuItems.forEach((item, index) => {
+                    item.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                });
+            }
+    
+            // Observador de intersección para activar la animación cuando el menú está en vista
+            const menuObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateMenuItems();
+                        menuObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+    
+            menuObserver.observe(document.querySelector('#menu'));
+    
+            // Cargar platos iniciales
+            loadDishes();
+    
+            document.getElementById('close-cart').addEventListener('click', function() {
+                document.getElementById('cart').classList.remove('open');
+                document.getElementById('cart-toggle').setAttribute('aria-expanded', 'false');
+            });
+    
+            // Initial cart item count update
+            updateCartItemCount();
+        // El resto de tu script existente
+    </script>
+    <section id="testimonios">
+        <div class="container">
+          <h2>Lo que dicen nuestros clientes</h2>
+          <div class="testimonios-grid">
+            <div class="testimonio">
+              <img src="img/cliente1.jpg" alt="Cliente 1" class="cliente-img">
+              <p class="testimonio-texto">"El servicio de Catering Seven fue excepcional. La comida estaba deliciosa y la presentación fue impecable."</p>
+              <p class="cliente-nombre">- María García</p>
+            </div>
+            <div class="testimonio">
+              <img src="img/cliente2.jpg" alt="Cliente 2" class="cliente-img">
+              <p class="testimonio-texto">"Contratamos a Catering Seven para nuestra boda y superaron todas nuestras expectativas. ¡Altamente recomendados!"</p>
+              <p class="cliente-nombre">- Juan Pérez</p>
+            </div>
+            <div class="testimonio">
+              <img src="img/cliente3.jpg" alt="Cliente 3" class="cliente-img">
+              <p class="testimonio-texto">"Profesionales, puntuales y con una calidad de comida extraordinaria. Definitivamente volveremos a contratarlos."</p>
+              <p class="cliente-nombre">- Ana Martínez</p>
+            </div>
+          </div>
+        </div>
+      </section>
+</body>
+</html>
